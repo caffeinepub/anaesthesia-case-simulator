@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.375rem;
+
+    /* Dark clinical monitor theme (default) */
+    --background: 0.11 0.018 240;
+    --foreground: 0.92 0.01 220;
+    --card: 0.15 0.022 235;
+    --card-foreground: 0.92 0.01 220;
+    --popover: 0.18 0.025 235;
+    --popover-foreground: 0.92 0.01 220;
+    --primary: 0.78 0.18 195;
+    --primary-foreground: 0.11 0.018 240;
+    --secondary: 0.20 0.03 235;
+    --secondary-foreground: 0.85 0.01 220;
+    --muted: 0.18 0.025 235;
+    --muted-foreground: 0.55 0.04 235;
+    --accent: 0.22 0.035 235;
+    --accent-foreground: 0.90 0.01 220;
+    --destructive: 0.62 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+    --border: 0.25 0.03 235;
+    --input: 0.22 0.03 235;
+    --ring: 0.78 0.18 195;
+    --chart-1: 0.82 0.22 155;
+    --chart-2: 0.85 0.16 195;
+    --chart-3: 0.88 0.18 95;
+    --chart-4: 0.80 0.15 35;
+    --chart-5: 0.72 0.20 280;
+    --sidebar: 0.13 0.020 238;
+    --sidebar-foreground: 0.90 0.01 220;
+    --sidebar-primary: 0.78 0.18 195;
+    --sidebar-primary-foreground: 0.11 0.018 240;
+    --sidebar-accent: 0.20 0.03 235;
+    --sidebar-accent-foreground: 0.85 0.01 220;
+    --sidebar-border: 0.22 0.03 235;
+    --sidebar-ring: 0.78 0.18 195;
+
+    /* Vital sign colors */
+    --vital-hr: 0.82 0.22 155;
+    --vital-spo2: 0.85 0.16 195;
+    --vital-bp: 0.88 0.18 95;
+    --vital-etco2: 0.88 0.02 220;
+    --vital-rr: 0.76 0.14 205;
+    --vital-temp: 0.78 0.16 38;
+
+    /* Alert colors */
+    --alert-amber: 0.80 0.20 70;
+    --alert-red: 0.62 0.22 25;
+    --alert-critical: 0.58 0.25 20;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Sora', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color-scheme: dark;
+  }
+
+  .font-mono-vitals {
+    font-family: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+  }
+
+  .font-display {
+    font-family: 'Bricolage Grotesque', 'Cabinet Grotesk', ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .vital-hr {
+    color: oklch(var(--vital-hr));
+    text-shadow: 0 0 12px oklch(var(--vital-hr) / 0.6);
+  }
+  .vital-spo2 {
+    color: oklch(var(--vital-spo2));
+    text-shadow: 0 0 12px oklch(var(--vital-spo2) / 0.6);
+  }
+  .vital-bp {
+    color: oklch(var(--vital-bp));
+    text-shadow: 0 0 12px oklch(var(--vital-bp) / 0.6);
+  }
+  .vital-etco2 {
+    color: oklch(var(--vital-etco2));
+    text-shadow: 0 0 8px oklch(var(--vital-etco2) / 0.4);
+  }
+  .vital-rr {
+    color: oklch(var(--vital-rr));
+    text-shadow: 0 0 10px oklch(var(--vital-rr) / 0.5);
+  }
+  .vital-temp {
+    color: oklch(var(--vital-temp));
+    text-shadow: 0 0 10px oklch(var(--vital-temp) / 0.5);
+  }
+  .vital-amber {
+    color: oklch(var(--alert-amber));
+    text-shadow: 0 0 14px oklch(var(--alert-amber) / 0.7);
+  }
+  .vital-red {
+    color: oklch(var(--alert-red));
+    text-shadow: 0 0 16px oklch(var(--alert-red) / 0.8);
+  }
+  .monitor-bg {
+    background: oklch(0.085 0.02 240);
+    border: 1px solid oklch(0.22 0.04 235);
+  }
+  .monitor-cell {
+    background: oklch(0.10 0.022 238);
+    border: 1px solid oklch(0.20 0.04 235);
+  }
+  .glow-primary {
+    box-shadow: 0 0 20px oklch(var(--primary) / 0.25), 0 4px 16px oklch(0.05 0.01 240 / 0.8);
+  }
+  .crisis-flash {
+    animation: crisis-pulse 1s ease-in-out infinite;
+  }
+  @keyframes crisis-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .scanline {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      oklch(0 0 0 / 0.08) 2px,
+      oklch(0 0 0 / 0.08) 4px
+    );
+  }
+}
