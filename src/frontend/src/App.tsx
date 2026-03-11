@@ -4,6 +4,7 @@ import type { CaseStep, Scenario } from "./backend.d";
 import ActiveCase from "./components/ActiveCase";
 import Debrief from "./components/Debrief";
 import ScenarioSelection from "./components/ScenarioSelection";
+import { useActor } from "./hooks/useActor";
 import { useGetScenarios, useInitializeScenarios } from "./hooks/useQueries";
 
 type AppView = "selection" | "case" | "debrief";
@@ -19,20 +20,31 @@ export default function App() {
   const [session, setSession] = useState<CaseSession | null>(null);
   const initCalledRef = useRef(false);
 
+  const { actor } = useActor();
   const initMutation = useInitializeScenarios();
   const scenariosQuery = useGetScenarios();
 
   const { mutate: initMutate } = initMutation;
-  const { isLoading, refetch } = scenariosQuery;
+  const { isLoading, refetch, data: scenarios } = scenariosQuery;
 
+  // Only initialize once we have an actor AND the query has settled with no data
   useEffect(() => {
-    if (!isLoading && !initCalledRef.current) {
-      initCalledRef.current = true;
-      initMutate(undefined, {
-        onSuccess: () => refetch(),
-      });
-    }
-  }, [isLoading, initMutate, refetch]);
+    if (!actor) return;
+    if (isLoading) return;
+    if (initCalledRef.current) return;
+    if (scenarios && scenarios.length > 0) return;
+
+    initCalledRef.current = true;
+    initMutate(undefined, {
+      onSuccess: () => {
+        refetch();
+      },
+      onError: () => {
+        // Allow retry next render cycle
+        initCalledRef.current = false;
+      },
+    });
+  }, [actor, isLoading, scenarios, initMutate, refetch]);
 
   function handleCaseStart(
     sessionId: bigint,
@@ -57,8 +69,8 @@ export default function App() {
     <div className="min-h-screen bg-background text-foreground">
       {view === "selection" && (
         <ScenarioSelection
-          scenarios={scenariosQuery.data ?? []}
-          isLoading={isLoading || initMutation.isPending}
+          scenarios={scenarios ?? []}
+          isLoading={isLoading || initMutation.isPending || !actor}
           onStart={handleCaseStart}
         />
       )}
