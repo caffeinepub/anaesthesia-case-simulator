@@ -1,5 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CaseStep, Scenario } from "./backend.d";
 import ActiveCase from "./components/ActiveCase";
 import Debrief from "./components/Debrief";
@@ -22,14 +22,17 @@ export default function App() {
   const initMutation = useInitializeScenarios();
   const scenariosQuery = useGetScenarios();
 
-  // Initialize scenarios once on mount when actor is ready
-  const actorReady = !scenariosQuery.isLoading;
-  if (actorReady && !initCalledRef.current) {
-    initCalledRef.current = true;
-    initMutation.mutate(undefined, {
-      onSuccess: () => scenariosQuery.refetch(),
-    });
-  }
+  const { mutate: initMutate } = initMutation;
+  const { isLoading, refetch } = scenariosQuery;
+
+  useEffect(() => {
+    if (!isLoading && !initCalledRef.current) {
+      initCalledRef.current = true;
+      initMutate(undefined, {
+        onSuccess: () => refetch(),
+      });
+    }
+  }, [isLoading, initMutate, refetch]);
 
   function handleCaseStart(
     sessionId: bigint,
@@ -47,7 +50,7 @@ export default function App() {
   function handleReset() {
     setSession(null);
     setView("selection");
-    scenariosQuery.refetch();
+    refetch();
   }
 
   return (
@@ -55,7 +58,7 @@ export default function App() {
       {view === "selection" && (
         <ScenarioSelection
           scenarios={scenariosQuery.data ?? []}
-          isLoading={scenariosQuery.isLoading || initMutation.isPending}
+          isLoading={isLoading || initMutation.isPending}
           onStart={handleCaseStart}
         />
       )}
